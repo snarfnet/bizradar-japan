@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BizRadar Japan</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="rail" aria-label="ナビゲーション">
+        <div class="mark">BR</div>
+        <button class="rail-button active" title="企業分析" aria-label="企業分析">⌕</button>
+        <button class="rail-button" title="保存リスト" aria-label="保存リスト">★</button>
+        <button class="rail-button" title="出力" aria-label="出力">⇩</button>
+        <button class="rail-button" title="設定" aria-label="設定">⚙</button>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">BtoB Research SaaS</p>
+            <h1>BizRadar Japan</h1>
+            <p class="subhead">法人情報、公共調達、開示書類から「今アプローチすべき企業」を見つける。</p>
+          </div>
+          <div class="top-actions">
+            <div class="api-state"><span class="dot"></span><span id="apiMode">Demo mode</span></div>
+            <button class="ghost-button" id="exportCsv">CSV出力</button>
+          </div>
+        </header>
+
+        <section class="search-panel" aria-label="検索">
+          <div class="search-copy">
+            <h2>企業名を入れるだけで、営業材料を1分で整理</h2>
+            <p>
+              gBizINFOの法人活動、官公需の公告、EDINETの開示をまとめ、案件化しやすい理由まで表示します。
+            </p>
+          </div>
+          <form class="search-box" id="searchForm">
+            <label for="companyInput">企業名・法人番号</label>
+            <div class="search-row">
+              <input id="companyInput" name="company" value="サンプル建設株式会社" autocomplete="off" />
+              <button type="submit">分析</button>
+            </div>
+            <div class="quick-searches" aria-label="サンプル検索">
+              <button type="button" data-query="サンプル建設株式会社">建設サンプル</button>
+              <button type="button" data-query="地域DX株式会社">DXサンプル</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="insight-grid">
+          <article class="score-panel">
+            <div class="score-ring" aria-label="営業優先度">
+              <span id="scoreValue">82</span>
+              <small>/100</small>
+            </div>
+            <div>
+              <p class="panel-kicker">営業優先度</p>
+              <h2 id="scoreTitle">公共案件との相性が高い</h2>
+              <p id="scoreText">調達履歴と入札候補が重なっています。営業先として優先度は高めです。</p>
+              <div class="action-row">
+                <button class="primary-button" id="saveLead">保存</button>
+                <button class="ghost-button" id="copyReport">要約コピー</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="mini-card">
+            <p>法人活動</p>
+            <strong id="activityCount">24件</strong>
+            <span>補助金・調達・表彰</span>
+          </article>
+          <article class="mini-card">
+            <p>入札候補</p>
+            <strong id="bidCount">18件</strong>
+            <span>直近公告</span>
+          </article>
+          <article class="mini-card">
+            <p>開示書類</p>
+            <strong id="filingCount">6件</strong>
+            <span>EDINET</span>
+          </article>
+        </section>
+
+        <section class="deal-board">
+          <article class="deal-card">
+            <p class="panel-kicker">次の一手</p>
+            <h2 id="nextAction">施設保守・更新工事の提案を優先</h2>
+            <p id="nextActionReason">公告テーマと調達履歴が一致しています。過去案件に近い提案書を先に作る価値があります。</p>
+          </article>
+          <article class="deal-card">
+            <p class="panel-kicker">想定提案</p>
+            <h2 id="offerTitle">公共施設向け保守点検パッケージ</h2>
+            <p id="offerText">入札前の仕様確認、見積作成、実績整理までをセットで提案できます。</p>
+          </article>
+          <article class="deal-card warning">
+            <p class="panel-kicker">注意点</p>
+            <h2 id="riskTitle">名寄せ精度は要確認</h2>
+            <p id="riskText">法人番号、会社名、EDINET提出者名が一致しないケースがあります。</p>
+          </article>
+        </section>
+
+        <section class="content-grid">
+          <article class="company-panel">
+            <div class="section-head">
+              <div>
+                <p class="panel-kicker">gBizINFO</p>
+                <h2>法人プロファイル</h2>
+              </div>
+              <span class="source-pill" id="companySource">demo</span>
+            </div>
+            <dl class="profile-list" id="profileList"></dl>
+          </article>
+
+          <article class="pipeline-panel">
+            <div class="section-head">
+              <div>
+                <p class="panel-kicker">官公需API</p>
+                <h2>狙える入札案件</h2>
+              </div>
+              <select id="bidFilter" aria-label="入札カテゴリ">
+                <option value="all">すべて</option>
+                <option value="construction">工事</option>
+                <option value="service">役務</option>
+                <option value="goods">物品</option>
+              </select>
+            </div>
+            <div class="bid-list" id="bidList"></div>
+          </article>
+
+          <article class="timeline-panel">
+            <div class="section-head">
+              <div>
+                <p class="panel-kicker">EDINET</p>
+                <h2>開示イベント</h2>
+              </div>
+              <span class="muted">有報・四半期・訂正</span>
+            </div>
+            <div class="timeline" id="filingTimeline"></div>
+          </article>
+
+          <article class="saved-panel">
+            <div class="section-head">
+              <div>
+                <p class="panel-kicker">営業リスト</p>
+                <h2>保存した企業</h2>
+              </div>
+              <button class="ghost-button small" id="clearLeads">消去</button>
+            </div>
+            <div class="saved-list" id="savedList"></div>
+          </article>
+        </section>
+
+        <section class="ops-grid">
+          <article class="onboarding-panel">
+            <div class="section-head">
+              <div>
+                <p class="panel-kicker">導入チェック</p>
+                <h2>販売前に確認する設定</h2>
+              </div>
+              <span class="source-pill" id="setupScore">3/6</span>
+            </div>
+            <div class="setup-list" id="setupList"></div>
+          </article>
+
+          <article class="alert-panel">
+            <div class="section-head">
+              <div>
+                <p class="panel-kicker">案件アラート</p>
+                <h2>今日見るべき変化</h2>
+              </div>
+              <button class="ghost-button small" id="markAlertsRead">既読</button>
+            </div>
+            <div class="alert-list" id="alertList"></div>
+          </article>
+        </section>
+
+        <section class="admin-grid">
+          <article class="admin-panel">
+            <div class="section-head">
+              <div>
+                <p class="panel-kicker">Team</p>
+                <h2>PoCチーム</h2>
+              </div>
+              <span class="source-pill">3 seats</span>
+            </div>
+            <div class="team-list" id="teamList"></div>
+          </article>
+
+          <article class="admin-panel">
+            <div class="section-head">
+              <div>
+                <p class="panel-kicker">Usage</p>
+                <h2>利用状況</h2>
+              </div>
+              <span class="source-pill">Pro trial</span>
+            </div>
+            <div class="usage-list" id="usageList"></div>
+          </article>
+
+          <article class="admin-panel audit-panel">
+            <div class="section-head">
+              <div>
+                <p class="panel-kicker">Audit</p>
+                <h2>監査ログ</h2>
+              </div>
+              <button class="ghost-button small" id="addAuditLog">記録</button>
+            </div>
+            <div class="audit-list" id="auditList"></div>
+          </article>
+        </section>
+
+        <section class="readiness-grid">
+          <article class="readiness-panel">
+            <div class="section-head">
+              <div>
+                <p class="panel-kicker">Production Readiness</p>
+                <h2>本番準備状態</h2>
+              </div>
+              <button class="ghost-button small" id="refreshHealth">再確認</button>
+            </div>
+            <div class="health-list" id="healthList"></div>
+          </article>
+
+          <article class="sales-kit-panel">
+            <div class="section-head">
+              <div>
+                <p class="panel-kicker">Sales Kit</p>
+                <h2>商談キット</h2>
+              </div>
+              <button class="ghost-button small" id="copySalesKit">コピー</button>
+            </div>
+            <div class="sales-kit" id="salesKit"></div>
+          </article>
+        </section>
+
+        <section class="pricing-grid" aria-label="料金プラン">
+          <article class="pricing-card">
+            <p class="panel-kicker">Starter</p>
+            <h2>月額 19,800円</h2>
+            <p>少人数で入札営業を試すプラン。検索300回、CSV出力、保存リスト付き。</p>
+            <button class="ghost-button plan-button" data-plan="Starter">このプランで試す</button>
+          </article>
+          <article class="pricing-card featured">
+            <p class="panel-kicker">Pro</p>
+            <h2>月額 49,800円</h2>
+            <p>営業チーム向け。検索2,000回、案件アラート、共有リスト、週次レポート。</p>
+            <button class="primary-button plan-button" data-plan="Pro">トライアル申込</button>
+          </article>
+          <article class="pricing-card">
+            <p class="panel-kicker">Enterprise</p>
+            <h2>個別見積</h2>
+            <p>名寄せ調整、API連携、監査ログ、専用環境が必要な企業向け。</p>
+            <button class="ghost-button plan-button" data-plan="Enterprise">相談する</button>
+          </article>
+        </section>
+
+        <section class="trial-panel" aria-label="トライアル申込">
+          <div>
+            <p class="panel-kicker">Trial</p>
+            <h2>導入候補に出せるトライアル導線</h2>
+            <p>営業資料だけでなく、画面上でプラン選択、会社名、担当者メールまで取れる形にしています。</p>
+          </div>
+          <form class="trial-form" id="trialForm">
+            <input id="trialCompany" placeholder="会社名" autocomplete="organization" />
+            <input id="trialEmail" type="email" placeholder="担当者メール" autocomplete="email" />
+            <select id="trialPlan" aria-label="希望プラン">
+              <option>Pro</option>
+              <option>Starter</option>
+              <option>Enterprise</option>
+            </select>
+            <button type="submit">申込データ作成</button>
+          </form>
+        </section>
+
+        <section class="product-grid">
+          <article>
+            <p class="panel-kicker">売り方</p>
+            <h2>最初の顧客</h2>
+            <p>入札支援会社、建設・設備会社、自治体営業を持つIT会社に刺さりやすい構成です。</p>
+          </article>
+          <article>
+            <p class="panel-kicker">価格案</p>
+            <h2>月額 19,800円から</h2>
+            <p>1社3ユーザー、検索300回、CSV出力付き。API利用料が重い場合は上位プランへ逃がします。</p>
+          </article>
+          <article>
+            <p class="panel-kicker">導入資料</p>
+            <h2>デモで価値を見せる</h2>
+            <p>「企業名を入れると案件理由が出る」体験を先に見せ、精度改善はPoCで詰めます。</p>
+          </article>
+        </section>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">コピーしました</div>
+    <script src="./script.js"></script>
+  </body>
+</html>

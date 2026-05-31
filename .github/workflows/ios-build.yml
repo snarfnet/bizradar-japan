@@ -1,0 +1,42 @@
+name: iOS Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "ios/BizRadarJapan/**"
+      - ".github/workflows/ios-build.yml"
+
+jobs:
+  simulator-build:
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: ios/BizRadarJapan
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.2.app
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+        env:
+          DEVELOPMENT_TEAM: ""
+          PRODUCT_BUNDLE_IDENTIFIER: com.bizradar.BizRadarJapan
+
+      - name: Build for simulator
+        run: |
+          xcodebuild \
+            -project BizRadarJapan.xcodeproj \
+            -scheme BizRadarJapan \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            CODE_SIGNING_ALLOWED=NO \
+            build
