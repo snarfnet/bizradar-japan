@@ -16,7 +16,7 @@ struct SavedLeadsView: View {
                             Spacer()
                             Text("\(lead.score)")
                                 .font(.title3.weight(.black))
-                                .foregroundStyle(.bizGreen)
+                                .foregroundStyle(Color.bizGreen)
                         }
                         Text(lead.reason)
                             .foregroundStyle(.secondary)

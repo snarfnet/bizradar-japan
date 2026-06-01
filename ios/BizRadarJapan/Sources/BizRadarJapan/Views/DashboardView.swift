@@ -33,7 +33,7 @@ struct DashboardView: View {
         VStack(alignment: .leading, spacing: 14) {
             Text("gBizINFO + 官公需API + EDINET")
                 .font(.caption.weight(.bold))
-                .foregroundStyle(.bizGreen)
+                .foregroundStyle(Color.bizGreen)
 
             Text("営業先を、公共データで選ぶ。")
                 .font(.system(size: 34, weight: .black, design: .rounded))
@@ -84,7 +84,7 @@ struct DashboardView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("営業優先度")
                     .font(.caption.weight(.bold))
-                    .foregroundStyle(.bizGreen)
+                    .foregroundStyle(Color.bizGreen)
                 Text(store.payload.insight.title)
                     .font(.title2.weight(.bold))
                 Text(store.payload.insight.text)
@@ -117,7 +117,7 @@ struct DashboardView: View {
     }
 
     private var contentGrid: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 330), spacing: 16)], alignment: .top, spacing: 16) {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 330), spacing: 16)], alignment: .leading, spacing: 16) {
             CompanyProfileView(company: store.payload.company)
             BidListView(bids: store.payload.bids)
             FilingListView(filings: store.payload.filings)

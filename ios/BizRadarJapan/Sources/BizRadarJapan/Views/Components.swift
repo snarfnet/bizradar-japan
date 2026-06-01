@@ -100,7 +100,7 @@ struct FilingListView: View {
                 VStack(alignment: .leading, spacing: 5) {
                     Text(filing.date)
                         .font(.caption.weight(.bold))
-                        .foregroundStyle(.bizGreen)
+                        .foregroundStyle(Color.bizGreen)
                     Text(filing.type)
                         .fontWeight(.semibold)
                     Text(filing.title)
